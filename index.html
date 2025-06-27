@@ -1,1 +1,66 @@
-# Ration-Card
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Simple QR Code Scanner</title>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 40px auto;
+      max-width: 600px;
+    }
+    #reader {
+      width: 100%;
+      max-width: 300px;
+      margin: 20px auto;
+      border: 2px solid #333;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+    @media (max-width: 480px) {
+      #reader { max-width: 250px; }
+    }
+  </style>
+</head>
+<body>
+  <h2>📷 Scan QR Code</h2>
+  <div id="reader"></div>
+  <p id="result"></p>
+
+  <script>
+    let html5QrcodeScanner;
+
+    function onScanSuccess(decodedText, decodedResult) {
+      html5QrcodeScanner.clear().then(() => {
+        document.getElementById('result').innerText = `Scanned Data: ${decodedText}`;
+      }).catch(error => {
+        console.error('Clear error:', error);
+        document.getElementById('result').innerText = 'Error scanning QR code.';
+      });
+    }
+
+    function startScanner() {
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear().catch(err => console.error('Clear error:', err));
+      }
+      html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader",
+        { fps: 10, qrbox: 250 },
+        false
+      );
+      html5QrcodeScanner.render(onScanSuccess).catch(err => {
+        document.getElementById('result').innerText = 'Camera access failed. Please allow permission.';
+      });
+    }
+
+    // Start scanner on page load
+    window.onload = startScanner;
+  </script>
+</body>
+</html>
